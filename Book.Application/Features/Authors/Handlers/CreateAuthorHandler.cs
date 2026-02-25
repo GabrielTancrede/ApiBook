@@ -21,6 +21,12 @@ namespace Book.Application.Features.Authors.Handlers
 
         public async Task<ValidationResult<AuthorViewModel>> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
         {
+            var validation = new ValidationResult<AuthorViewModel>();
+
+            var nameExists = await _authorRepository.ExistsByNameAsync(request.Dto.Name);
+            if (nameExists)
+                return validation.Invalid("Já existe um autor com este nome.");
+
             var author = new Author
             {
                 Name = request.Dto.Name,

@@ -24,6 +24,13 @@ namespace Book.Infra.Repositories
             return await DbSet.AnyAsync(a => a.Id == id);
         }
 
+        public async Task<bool> ExistsByNameAsync(string name, int? excludeId = null)
+        {
+            return await DbSet.AnyAsync(a =>
+                EF.Functions.ILike(a.Name, $"{name}") &&
+                (!excludeId.HasValue || a.Id != excludeId.Value));
+        }
+
         public async Task<bool> HasBooksAsync(int id)
         {
             return await Db.Set<Core.Entites.Book>().AnyAsync(b => b.AuthorId == id);

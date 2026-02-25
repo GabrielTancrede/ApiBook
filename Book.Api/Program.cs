@@ -1,6 +1,8 @@
 using Book.Api.Configurations;
 using Book.Api.Middlewares;
+using Book.Core.ValueObjects;
 using Book.Infra.Context;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -9,7 +11,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigurationManager configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var errors = context.ModelState
+                .Where(e => e.Value?.Errors.Count > 0)
+                .SelectMany(e => e.Value!.Errors.Select(err => new
+                {
+                    Field = e.Key,
+                    Message = err.ErrorMessage
+                }))
+                .ToList();
+
+            var firstError = errors.FirstOrDefault()?.Message ?? "Dados de entrada invÃ¡lidos.";
+
+            var errorResponse = new ErrorResponse(
+                400,
+                firstError,
+                context.HttpContext.Request.Path.Value ?? string.Empty,
+                errors,
+                Guid.NewGuid().ToString()
+            );
+
+            return new BadRequestObjectResult(errorResponse);
+        };
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -17,7 +45,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "API Book",
         Version = "v1",
-        Description = "API REST para gerenciamento de livros, autores e gêneros",
+        Description = "API REST para gerenciamento de livros, autores e gï¿½neros",
         Contact = new OpenApiContact
         {
             Name = "API Book",

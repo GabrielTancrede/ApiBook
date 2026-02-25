@@ -11,7 +11,7 @@ using MediatR;
 namespace Book.Api.Controllers
 {
     [ApiController]
-    [Route("api/genres")]
+    [Route("api/v1/genres")]
     public class GenresController : CustomControllerBase
     {
         private readonly IMediator _mediator;

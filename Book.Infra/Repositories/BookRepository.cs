@@ -22,6 +22,14 @@ namespace Book.Infra.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
+        public async Task<bool> ExistsByTitleAndAuthorAsync(string title, int authorId, int? excludeId = null)
+        {
+            return await DbSet.AnyAsync(b =>
+                EF.Functions.ILike(b.Title, $"{title}") &&
+                b.AuthorId == authorId &&
+                (!excludeId.HasValue || b.Id != excludeId.Value));
+        }
+
         public async Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize)
         {
             return await DbSet

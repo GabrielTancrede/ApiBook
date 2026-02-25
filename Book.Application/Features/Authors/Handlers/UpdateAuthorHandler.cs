@@ -23,7 +23,11 @@ namespace Book.Application.Features.Authors.Handlers
             var validation = new ValidationResult<AuthorViewModel>();
             var author = await _authorRepository.GetByIdAsync(request.Id);
             if (author == null)
-                return validation.NotFound("Autor n�o encontrado.");
+                return validation.NotFound("Autor não encontrado.");
+
+            var nameExists = await _authorRepository.ExistsByNameAsync(request.Dto.Name, request.Id);
+            if (nameExists)
+                return validation.Invalid("Já existe um autor com este nome.");
 
             author.Name = request.Dto.Name;
             author.Biography = request.Dto.Biography;

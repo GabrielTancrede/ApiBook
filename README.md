@@ -5,6 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Entity Framework](https://img.shields.io/badge/Entity_Framework-8.0-512BD4?style=for-the-badge&logo=.net&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![xUnit](https://img.shields.io/badge/xUnit-50_tests-brightgreen?style=for-the-badge&logo=dotnet&logoColor=white)
 
 Uma API REST robusta e escalável desenvolvida em .NET 8 para gerenciamento completo de livros, autores e gêneros literários, seguindo as melhores práticas de Clean Architecture e princípios SOLID.
 
@@ -18,9 +19,12 @@ Este projeto foi desenvolvido como um sistema completo de gerenciamento de bibli
 - ✅ Aplicar Clean Architecture e separação de responsabilidades
 - ✅ Utilizar CQRS (Command Query Responsibility Segregation) com MediatR
 - ✅ Implementar Repository Pattern com Entity Framework Core
-- ✅ Criar API RESTful com versionamento
+- ✅ Criar API RESTful com versionamento (`/api/v1/`)
 - ✅ Documentar endpoints com Swagger/OpenAPI
 - ✅ Utilizar PostgreSQL como banco de dados
+- ✅ Validação de entrada com **DataAnnotations** em todos os DTOs
+- ✅ Validação de duplicidade (gêneros, autores e livros)
+- ✅ Testes unitários abrangentes com **xUnit**, **Moq** e **FluentAssertions** (50 testes)
 
 ## 🏗️ Arquitetura
 
@@ -110,6 +114,9 @@ Expõe os endpoints da API e configurações.
 - ✅ **Padronização de respostas HTTP**
 - ✅ **Paginação** de resultados
 - ✅ **Validation Result Pattern**
+- ✅ **Input Validation** com DataAnnotations nos DTOs
+- ✅ **Duplicate Validation** (verificação de duplicidade no banco)
+- ✅ **Unit Testing** com xUnit + Moq + FluentAssertions
 
 ## 📊 Modelo de Dados
 
@@ -138,40 +145,76 @@ Expõe os endpoints da API e configurações.
 - ✅ Cada **livro** pertence a apenas um autor e um gênero
 - ✅ Não é possível excluir gênero/autor com livros associados
 - ✅ Datas de criação e atualização são controladas automaticamente
+- ✅ **Nomes de gêneros** devem ser únicos (case-insensitive)
+- ✅ **Nomes de autores** devem ser únicos (case-insensitive)
+- ✅ **Livros** não podem ter título duplicado para o mesmo autor (case-insensitive)
+- ✅ Validação de entrada obrigatória em todos os DTOs (campos obrigatórios, tamanho máximo, etc.)
 
-## 📡 Endpoints da API
+## � Validação e Segurança
+
+### Validação de Entrada (DataAnnotations)
+
+Todos os DTOs possuem validação com **DataAnnotations**, garantindo que os dados enviados à API estejam corretos antes de atingir o handler:
+
+| DTO | Campos Obrigatórios | Regras |
+|-----|---------------------|--------|
+| CreateGenreDto / UpdateGenreDto | Name | Name: max 100 chars; Description: max 500 chars |
+| CreateAuthorDto / UpdateAuthorDto | Name | Name: max 150 chars; Biography: max 2000 chars |
+| CreateBookDto / UpdateBookDto | Title, AuthorId, GenreId | Title: max 200 chars; Description: max 2000 chars; ISBN: max 20 chars |
+
+A API utiliza `InvalidModelStateResponseFactory` para retornar automaticamente respostas `400 Bad Request` padronizadas quando os dados falham na validação.
+
+### Validação de Duplicidade
+
+A camada de aplicação verifica duplicidade antes de criar ou atualizar registros:
+
+| Entidade | Regra de Duplicidade |
+|----------|---------------------|
+| Gênero | Nome único (case-insensitive) |
+| Autor | Nome único (case-insensitive) |
+| Livro | Título único por autor (case-insensitive) |
+
+> Na atualização, o próprio registro é excluído da verificação (`excludeId`) para permitir salvar sem alterar o nome/título.
+
+### Boas Práticas de Segurança
+
+- ✅ Senha do banco de dados configurada via placeholder `${DB_PASSWORD}` no `appsettings.json`
+- ✅ Credenciais reais apenas no `appsettings.Development.json` (excluído do Git)
+- ✅ Pacote `Microsoft.EntityFrameworkCore.SqlServer` removido (projeto utiliza apenas PostgreSQL)
+
+## �📡 Endpoints da API
 
 Todos os endpoints seguem o padrão REST e estão documentados no Swagger.
 
-### 📗 Gêneros (`/api/genres`)
+### 📗 Gêneros (`/api/v1/genres`)
 
 | Método | Endpoint | Descrição | Status Codes |
 |--------|----------|-----------|--------------|
-| `GET` | `/api/genres` | Lista todos os gêneros com paginação | 200, 400 |
-| `GET` | `/api/genres/{id}` | Obtém um gênero específico por ID | 200, 404 |
-| `POST` | `/api/genres` | Cria um novo gênero | 201, 400 |
-| `PUT` | `/api/genres/{id}` | Atualiza um gênero existente | 200, 400, 404 |
-| `DELETE` | `/api/genres/{id}` | Exclui um gênero | 204, 400, 404 |
+| `GET` | `/api/v1/genres` | Lista todos os gêneros com paginação | 200, 400 |
+| `GET` | `/api/v1/genres/{id}` | Obtém um gênero específico por ID | 200, 404 |
+| `POST` | `/api/v1/genres` | Cria um novo gênero | 201, 400 |
+| `PUT` | `/api/v1/genres/{id}` | Atualiza um gênero existente | 200, 400, 404 |
+| `DELETE` | `/api/v1/genres/{id}` | Exclui um gênero | 204, 400, 404 |
 
-### 👨‍💼 Autores (`/api/authors`)
-
-| Método | Endpoint | Descrição | Status Codes |
-|--------|----------|-----------|--------------|
-| `GET` | `/api/authors` | Lista todos os autores com paginação | 200, 400 |
-| `GET` | `/api/authors/{id}` | Obtém um autor específico por ID | 200, 404 |
-| `POST` | `/api/authors` | Cria um novo autor | 201, 400 |
-| `PUT` | `/api/authors/{id}` | Atualiza um autor existente | 200, 400, 404 |
-| `DELETE` | `/api/authors/{id}` | Exclui um autor | 204, 400, 404 |
-
-### 📘 Livros (`/api/books`)
+### 👨‍💼 Autores (`/api/v1/authors`)
 
 | Método | Endpoint | Descrição | Status Codes |
 |--------|----------|-----------|--------------|
-| `GET` | `/api/books` | Lista todos os livros com paginação | 200, 400 |
-| `GET` | `/api/books/{id}` | Obtém um livro específico por ID | 200, 404 |
-| `POST` | `/api/books` | Cria um novo livro | 201, 400 |
-| `PUT` | `/api/books/{id}` | Atualiza um livro existente | 200, 400, 404 |
-| `DELETE` | `/api/books/{id}` | Exclui um livro | 204, 400, 404 |
+| `GET` | `/api/v1/authors` | Lista todos os autores com paginação | 200, 400 |
+| `GET` | `/api/v1/authors/{id}` | Obtém um autor específico por ID | 200, 404 |
+| `POST` | `/api/v1/authors` | Cria um novo autor | 201, 400 |
+| `PUT` | `/api/v1/authors/{id}` | Atualiza um autor existente | 200, 400, 404 |
+| `DELETE` | `/api/v1/authors/{id}` | Exclui um autor | 204, 400, 404 |
+
+### 📘 Livros (`/api/v1/books`)
+
+| Método | Endpoint | Descrição | Status Codes |
+|--------|----------|-----------|--------------|
+| `GET` | `/api/v1/books` | Lista todos os livros com paginação | 200, 400 |
+| `GET` | `/api/v1/books/{id}` | Obtém um livro específico por ID | 200, 404 |
+| `POST` | `/api/v1/books` | Cria um novo livro | 201, 400 |
+| `PUT` | `/api/v1/books/{id}` | Atualiza um livro existente | 200, 400, 404 |
+| `DELETE` | `/api/v1/books/{id}` | Exclui um livro | 204, 400, 404 |
 
 ### Paginação
 
@@ -181,7 +224,7 @@ Todos os endpoints GET de listagem suportam paginação através dos parâmetros
 
 **Exemplo:**
 ```
-GET /api/books?page=1&pageSize=10
+GET /api/v1/books?page=1&pageSize=10
 ```
 
 ## ⚙️ Configuração e Instalação
@@ -254,7 +297,7 @@ Substitua `7xxx` pela porta configurada (verifique no terminal).
 
 ### Criar um Gênero
 ```http
-POST /api/genres
+POST /api/v1/genres
 Content-Type: application/json
 
 {
@@ -276,7 +319,7 @@ Content-Type: application/json
 
 ### Criar um Autor
 ```http
-POST /api/authors
+POST /api/v1/authors
 Content-Type: application/json
 
 {
@@ -300,7 +343,7 @@ Content-Type: application/json
 
 ### Criar um Livro
 ```http
-POST /api/books
+POST /api/v1/books
 Content-Type: application/json
 
 {
@@ -332,7 +375,7 @@ Content-Type: application/json
 
 ### Obter um Livro por ID
 ```http
-GET /api/books/1
+GET /api/v1/books/1
 ```
 
 **Resposta (200 OK):**
@@ -354,7 +397,7 @@ GET /api/books/1
 
 ### Listar Livros com Paginação
 ```http
-GET /api/books?page=1&pageSize=10
+GET /api/v1/books?page=1&pageSize=10
 ```
 
 **Resposta (200 OK):**
@@ -389,7 +432,7 @@ GET /api/books?page=1&pageSize=10
 
 ### Atualizar um Gênero
 ```http
-PUT /api/genres/1
+PUT /api/v1/genres/1
 Content-Type: application/json
 
 {
@@ -411,7 +454,7 @@ Content-Type: application/json
 
 ### Excluir um Livro
 ```http
-DELETE /api/books/1
+DELETE /api/v1/books/1
 ```
 
 **Resposta (204 No Content):**
@@ -438,7 +481,7 @@ A API utiliza os seguintes códigos de status HTTP padronizados:
 {
   "statusCode": 400,
   "message": "Mensagem de erro detalhada",
-  "path": "/api/genres/999"
+  "path": "/api/v1/genres/999"
 }
 ```
 
@@ -533,26 +576,74 @@ A API utiliza os seguintes códigos de status HTTP padronizados:
 ┃   ┣ 📜 AuthorRepository.cs
 ┃   ┣ 📜 BookRepository.cs
 ┃   ┗ 📜 GenreRepository.cs
+┣ 📂 Book.Tests
+┃ ┣ 📂 Authors
+┃ ┃ ┗ 📂 Handlers
+┃ ┃   ┣ 📜 CreateAuthorHandlerTests.cs
+┃ ┃   ┣ 📜 UpdateAuthorHandlerTests.cs
+┃ ┃   ┣ 📜 DeleteAuthorHandlerTests.cs
+┃ ┃   ┣ 📜 GetAuthorByIdHandlerTests.cs
+┃ ┃   ┗ 📜 GetPagedAuthorsHandlerTests.cs
+┃ ┣ 📂 Books
+┃ ┃ ┗ 📂 Handlers
+┃ ┃   ┣ 📜 CreateBookHandlerTests.cs
+┃ ┃   ┣ 📜 UpdateBookHandlerTests.cs
+┃ ┃   ┣ 📜 DeleteBookHandlerTests.cs
+┃ ┃   ┣ 📜 GetBookByIdHandlerTests.cs
+┃ ┃   ┗ 📜 GetPagedBooksHandlerTests.cs
+┃ ┗ 📂 Genres
+┃   ┗ 📂 Handlers
+┃     ┣ 📜 CreateGenreHandlerTests.cs
+┃     ┣ 📜 UpdateGenreHandlerTests.cs
+┃     ┣ 📜 DeleteGenreHandlerTests.cs
+┃     ┣ 📜 GetGenreByIdHandlerTests.cs
+┃     ┗ 📜 GetPagedGenresHandlerTests.cs
 ┗ 📜 README.md
 ```
 
 ## 🧪 Testes
 
-O projeto está preparado para implementação de testes. Para adicionar testes unitários:
+O projeto possui **50 testes unitários** cobrindo todos os handlers (Commands e Queries) das três entidades, utilizando **xUnit**, **Moq** e **FluentAssertions**.
+
+### Tecnologias de Teste
+
+| Pacote | Versão | Finalidade |
+|--------|--------|------------|
+| xUnit | 2.x | Framework de testes |
+| Moq | 4.20.72 | Criação de mocks |
+| FluentAssertions | 7.2.0 | Asserções legíveis e expressivas |
+
+### Cobertura de Testes
+
+| Feature | Create | Update | Delete | GetById | GetPaged | Duplicidade | Total |
+|---------|:------:|:------:|:------:|:-------:|:--------:|:-----------:|:-----:|
+| Gêneros | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 18 |
+| Autores | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 16 |
+| Livros  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 16 |
+| **Total** | | | | | | | **50** |
+
+### Cenários Testados
+
+- ✅ Criação com dados válidos
+- ✅ Atualização com dados válidos
+- ✅ Exclusão de entidade existente
+- ✅ Busca por ID existente e inexistente
+- ✅ Listagem paginada
+- ✅ Tentativa de exclusão com livros associados (gênero/autor)
+- ✅ Tentativa de criação/atualização com nome duplicado (gênero/autor)
+- ✅ Tentativa de criação/atualização com título duplicado para o mesmo autor (livro)
+- ✅ Validação de entidade inexistente (update/delete)
+
+### Executar os Testes
 
 ```bash
-# Criar projeto de testes
-dotnet new xunit -n Book.Tests
-dotnet sln add Book.Tests/Book.Tests.csproj
+dotnet test
+```
 
-# Adicionar referências aos projetos
-dotnet add Book.Tests reference Book.Application/Book.Application.csproj
-dotnet add Book.Tests reference Book.Core/Book.Core.csproj
+Ou com detalhes:
 
-# Adicionar pacotes de teste
-dotnet add Book.Tests package Moq
-dotnet add Book.Tests package FluentAssertions
-dotnet add Book.Tests package Microsoft.EntityFrameworkCore.InMemory
+```bash
+dotnet test --verbosity normal
 ```
 
 ## 🛠️ Ferramentas de Desenvolvimento
@@ -600,4 +691,4 @@ A documentação interativa está disponível em:
 - **DTOs:** `{Action}{Entity}Dto.cs`
 - **ViewModels:** `{Entity}ViewModel.cs`
 
-**Desenvolvido com ❤️ usando .NET 8 e Clean Architecture**
+**Desenvolvido com .NET 8 e Clean Architecture**

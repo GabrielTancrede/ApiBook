@@ -32,15 +32,19 @@ namespace Book.Application.Features.Books.Handlers
 
             var book = await _bookRepository.GetByIdAsync(request.Id);
             if (book == null)
-                return validation.NotFound("Livro não encontrado.");
+                return validation.NotFound("Livro nï¿½o encontrado.");
 
             var authorExists = await _authorRepository.ExistsAsync(request.Dto.AuthorId);
             if (!authorExists)
-                return validation.NotFound("Autor não encontrado.");
+                return validation.NotFound("Autor nï¿½o encontrado.");
 
             var genreExists = await _genreRepository.ExistsAsync(request.Dto.GenreId);
             if (!genreExists)
-                return validation.NotFound("Gênero não encontrado.");
+                return validation.NotFound("GÃªnero nÃ£o encontrado.");
+
+            var duplicateBook = await _bookRepository.ExistsByTitleAndAuthorAsync(request.Dto.Title, request.Dto.AuthorId, request.Id);
+            if (duplicateBook)
+                return validation.Invalid("JÃ¡ existe um livro com este tÃ­tulo para o mesmo autor.");
 
             book.Title = request.Dto.Title;
             book.Description = request.Dto.Description;

@@ -21,6 +21,12 @@ namespace Book.Application.Features.Genres.Handlers
 
         public async Task<ValidationResult<GenreViewModel>> Handle(CreateGenreCommand request, CancellationToken cancellationToken)
         {
+            var validation = new ValidationResult<GenreViewModel>();
+
+            var nameExists = await _genreRepository.ExistsByNameAsync(request.Dto.Name);
+            if (nameExists)
+                return validation.Invalid("Já existe um gênero com este nome.");
+
             var genre = new Genre
             {
                 Name = request.Dto.Name,
@@ -32,7 +38,7 @@ namespace Book.Application.Features.Genres.Handlers
             await _genreRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<GenreViewModel>(genre);
-            return new ValidationResult<GenreViewModel>().Ok(viewModel, "G�nero criado com sucesso.");
+            return new ValidationResult<GenreViewModel>().Ok(viewModel, "G�nero criado com sucesso.");
         }
     }
 }

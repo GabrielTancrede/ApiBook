@@ -24,7 +24,11 @@ namespace Book.Application.Features.Genres.Handlers
 
             var genre = await _genreRepository.GetByIdAsync(request.Id);
             if (genre == null)
-                return validation.NotFound("Gênero não encontrado.");
+                return validation.NotFound("GÃªnero nÃ£o encontrado.");
+
+            var nameExists = await _genreRepository.ExistsByNameAsync(request.Dto.Name, request.Id);
+            if (nameExists)
+                return validation.Invalid("JÃ¡ existe um gÃªnero com este nome.");
 
             genre.Name = request.Dto.Name;
             genre.Description = request.Dto.Description;
@@ -34,7 +38,7 @@ namespace Book.Application.Features.Genres.Handlers
             await _genreRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<GenreViewModel>(genre);
-            return validation.Ok(viewModel, "Gênero atualizado com sucesso.");
+            return validation.Ok(viewModel, "Gï¿½nero atualizado com sucesso.");
         }
     }
 }
