@@ -3,201 +3,258 @@
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-12.0-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Entity Framework](https://img.shields.io/badge/Entity_Framework-8.0-512BD4?style=for-the-badge&logo=.net&logoColor=white)
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 
-Uma API REST robusta e escalável desenvolvida em .NET 8 para gerenciamento completo de livros, autores e gêneros literários, seguindo as melhores práticas de desenvolvimento de software.
+Uma API REST robusta e escalável desenvolvida em .NET 8 para gerenciamento completo de livros, autores e gêneros literários, seguindo as melhores práticas de Clean Architecture e princípios SOLID.
 
 ## 📋 Sobre o Projeto
 
-Este projeto foi desenvolvido como um sistema de gerenciamento de biblioteca, permitindo operações CRUD (Create, Read, Update, Delete) para três entidades principais: **Gêneros**, **Autores** e **Livros**. A aplicação foi construída seguindo os princípios SOLID, Clean Architecture e utilizando padrões modernos de desenvolvimento.
+Este projeto foi desenvolvido como um sistema completo de gerenciamento de biblioteca, permitindo operações CRUD (Create, Read, Update, Delete) para três entidades principais: **Gêneros**, **Autores** e **Livros**. A aplicação implementa padrões modernos de desenvolvimento, incluindo CQRS com MediatR, Repository Pattern e Clean Architecture.
 
 ### 🎯 Objetivos
 
-- Implementar um sistema completo de gerenciamento de livros
-- Aplicar boas práticas de arquitetura de software
-- Demonstrar conhecimento em .NET 8, Entity Framework Core e PostgreSQL
-- Utilizar padrões de design como CQRS, Repository Pattern e Dependency Injection
-- Documentar a API com Swagger/OpenAPI
+- ✅ Implementar um sistema completo de gerenciamento de livros
+- ✅ Aplicar Clean Architecture e separação de responsabilidades
+- ✅ Utilizar CQRS (Command Query Responsibility Segregation) com MediatR
+- ✅ Implementar Repository Pattern com Entity Framework Core
+- ✅ Criar API RESTful com versionamento
+- ✅ Documentar endpoints com Swagger/OpenAPI
+- ✅ Utilizar PostgreSQL como banco de dados
 
 ## 🏗️ Arquitetura
 
-O projeto segue uma **arquitetura em camadas** (Clean Architecture), garantindo separação de responsabilidades e alta testabilidade:
+O projeto segue os princípios da **Clean Architecture**, garantindo separação de responsabilidades, testabilidade e manutenibilidade:
 
 ```
 📦 ApiBook
- ┣ 📂 Book.Api          # Camada de Apresentação (Controllers, Configurações)
- ┣ 📂 Book.Application  # Camada de Aplicação (Use Cases, DTOs, ViewModels)
- ┣ 📂 Book.Core         # Camada de Domínio (Entidades, Interfaces)
- ┗ 📂 Book.Infra        # Camada de Infraestrutura (Repositórios, DbContext)
+ ┣ 📂 Book.Api          # Camada de Apresentação
+ ┣ 📂 Book.Application  # Camada de Aplicação
+ ┣ 📂 Book.Core         # Camada de Domínio
+ ┗ 📂 Book.Infra        # Camada de Infraestrutura
 ```
 
-### 📐 Camadas do Projeto
+### 📐 Detalhamento das Camadas
 
 #### **Book.Core** (Domínio)
-- Entidades do domínio (Book, Author, Genre)
-- Interfaces base (IRepositoryBase)
-- Regras de negócio fundamentais
+Camada central do projeto, contendo as entidades e regras de negócio fundamentais.
+
+- **Entidades:** Book, Author, Genre
+- **Enums:** ResultType
+- **Value Objects:** ValidationResult, PagedList, ErrorResponse
+- **Interfaces base:** IRepositoryBase
 
 #### **Book.Application** (Aplicação)
-- DTOs (Data Transfer Objects)
-- ViewModels
-- Commands e Queries (CQRS com MediatR)
-- Handlers de negócio
-- Profiles do AutoMapper
-- Interfaces de repositórios específicos
+Contém toda a lógica de aplicação, DTOs, ViewModels e handlers.
+
+- **DTOs:** CreateGenreDto, UpdateGenreDto, CreateAuthorDto, UpdateAuthorDto, CreateBookDto, UpdateBookDto
+- **ViewModels:** GenreViewModel, AuthorViewModel, AuthorWithBooksViewModel, BookViewModel
+- **Features (CQRS):**
+  - Commands: CreateGenreCommand, UpdateGenreCommand, DeleteGenreCommand
+  - Queries: GetPagedGenresQuery, GetGenreByIdQuery
+  - Handlers: CreateGenreHandler, UpdateGenreHandler, DeleteGenreHandler, GetPagedGenresHandler, GetGenreByIdHandler
+- **Profiles AutoMapper:** MappingProfiles
+- **Interfaces:** IAuthorRepository, IBookRepository, IGenreRepository
+- **Model Inputs:** PaginationRequest
 
 #### **Book.Infra** (Infraestrutura)
-- Implementação dos repositórios
-- Configuração do DbContext (Entity Framework Core)
-- Migrations do banco de dados
-- Configurações de relacionamentos
+Implementa os repositórios e configuração do banco de dados.
+
+- **Context:** AppDbContext (Entity Framework Core)
+- **Repositories:**
+  - RepositoryBase (genérico)
+  - AuthorRepository
+  - BookRepository
+  - GenreRepository
+- **Migrations:** Controle de versão do banco de dados
+- **Extensions:** InfrastructureServiceExtensions
 
 #### **Book.Api** (Apresentação)
-- Controllers RESTful com versionamento (v1)
-- Configuração do Swagger
-- Injeção de dependências
-- Middlewares e configurações de startup
+Expõe os endpoints da API e configurações.
+
+- **Controllers:**
+  - AuthorsController
+  - BooksController
+  - GenresController
+- **Configurations:**
+  - CustomControllerBase (controlador base com métodos auxiliares)
+  - Service Configuration Extensions
+- **Swagger/OpenAPI:** Documentação interativa da API
+- **Program.cs:** Configuração da aplicação
 
 ## 🚀 Tecnologias Utilizadas
 
 ### Core
 - **.NET 8.0** - Framework principal
 - **C# 12.0** - Linguagem de programação
-- **ASP.NET Core** - Web API
+- **ASP.NET Core Web API** - Para criação da API REST
 
 ### Banco de Dados
 - **PostgreSQL** - Banco de dados relacional
 - **Entity Framework Core 8.0.11** - ORM
-- **Npgsql.EntityFrameworkCore.PostgreSQL** - Provider PostgreSQL
+- **Npgsql.EntityFrameworkCore.PostgreSQL 8.0.11** - Provider PostgreSQL
 
-### Bibliotecas e Patterns
-- **MediatR 12.4.1** - Padrão CQRS e Mediator
+### Bibliotecas e Padrões
+- **MediatR 12.4.1** - Implementação do padrão Mediator e CQRS
 - **AutoMapper 12.0.1** - Mapeamento objeto-objeto
 - **Swashbuckle.AspNetCore 6.6.2** - Documentação Swagger/OpenAPI
 
-### Padrões e Práticas
+### Padrões e Práticas Implementadas
 - ✅ **CQRS** (Command Query Responsibility Segregation)
-- ✅ **Repository Pattern**
-- ✅ **Dependency Injection**
-- ✅ **Clean Architecture**
+- ✅ **Repository Pattern** com implementação genérica
+- ✅ **Dependency Injection** nativa do .NET
+- ✅ **Clean Architecture** com separação de camadas
 - ✅ **SOLID Principles**
-- ✅ **DTOs e ViewModels**
+- ✅ **DTOs e ViewModels** para transferência de dados
 - ✅ **API Versionamento**
-- ✅ **HTTP Status Codes padronizados**
+- ✅ **Padronização de respostas HTTP**
+- ✅ **Paginação** de resultados
+- ✅ **Validation Result Pattern**
 
 ## 📊 Modelo de Dados
 
 ### Entidades e Relacionamentos
 
 ```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│   Genre     │         │     Book     │         │   Author    │
-├─────────────┤         ├──────────────┤         ├─────────────┤
-│ Id          │◄───────┤│ Id           │├───────►│ Id          │
-│ Name        │    1:N  │ Title        │  N:1    │ Name        │
-│ Description │         │ Description  │         │ Biography   │
-│ CreatedAt   │         │ PublicationDt│         │ BirthDate   │
-│ UpdatedAt   │         │ ISBN         │         │ CreatedAt   │
-└─────────────┘         │ AuthorId (FK)│         │ UpdatedAt   │
-                        │ GenreId (FK) │         └─────────────┘
-                        │ CreatedAt    │
-                        │ UpdatedAt    │
-                        └──────────────┘
+┌─────────────────┐         ┌──────────────────┐         ┌─────────────────┐
+│     Genre       │         │       Book       │         │     Author      │
+├─────────────────┤         ├──────────────────┤         ├─────────────────┤
+│ Id (PK)         │◄────────┤ Id (PK)          │├───────►│ Id (PK)         │
+│ Name            │    1:N  │ Title            │  N:1    │ Name            │
+│ Description     │         │ Description      │         │ Biography       │
+│ CreatedAt       │         │ PublicationDate  │         │ BirthDate       │
+│ UpdatedAt       │         │ ISBN             │         │ CreatedAt       │
+└─────────────────┘         │ AuthorId (FK)    │         │ UpdatedAt       │
+                            │ GenreId (FK)     │         └─────────────────┘
+                            │ CreatedAt        │
+                            │ UpdatedAt        │
+                            └──────────────────┘
 ```
 
 ### Regras de Negócio
 
-- ✅ Um **gênero** pode ter N livros
-- ✅ Um **autor** pode ter N livros
+- ✅ Um **gênero** pode ter múltiplos livros (1:N)
+- ✅ Um **autor** pode ter múltiplos livros (1:N)
 - ✅ Cada **livro** pertence a apenas um autor e um gênero
 - ✅ Não é possível excluir gênero/autor com livros associados
+- ✅ Datas de criação e atualização são controladas automaticamente
 
 ## 📡 Endpoints da API
 
-### 📗 Gêneros
+Todos os endpoints seguem o padrão REST e estão documentados no Swagger.
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/v1/genres` | Lista todos os gêneros |
-| `GET` | `/api/v1/genres/{id}` | Obtém um gênero por ID |
-| `POST` | `/api/v1/genres` | Cria um novo gênero |
-| `PUT` | `/api/v1/genres/{id}` | Atualiza um gênero existente |
-| `DELETE` | `/api/v1/genres/{id}` | Exclui um gênero |
+### 📗 Gêneros (`/api/genres`)
 
-### 👨‍💼 Autores
+| Método | Endpoint | Descrição | Status Codes |
+|--------|----------|-----------|--------------|
+| `GET` | `/api/genres` | Lista todos os gêneros com paginação | 200, 400 |
+| `GET` | `/api/genres/{id}` | Obtém um gênero específico por ID | 200, 404 |
+| `POST` | `/api/genres` | Cria um novo gênero | 201, 400 |
+| `PUT` | `/api/genres/{id}` | Atualiza um gênero existente | 200, 400, 404 |
+| `DELETE` | `/api/genres/{id}` | Exclui um gênero | 204, 400, 404 |
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/v1/authors` | Lista todos os autores |
-| `GET` | `/api/v1/authors/{id}` | Obtém um autor por ID |
-| `POST` | `/api/v1/authors` | Cria um novo autor |
-| `PUT` | `/api/v1/authors/{id}` | Atualiza um autor existente |
-| `DELETE` | `/api/v1/authors/{id}` | Exclui um autor |
+### 👨‍💼 Autores (`/api/authors`)
 
-### 📘 Livros
+| Método | Endpoint | Descrição | Status Codes |
+|--------|----------|-----------|--------------|
+| `GET` | `/api/authors` | Lista todos os autores com paginação | 200, 400 |
+| `GET` | `/api/authors/{id}` | Obtém um autor específico por ID | 200, 404 |
+| `POST` | `/api/authors` | Cria um novo autor | 201, 400 |
+| `PUT` | `/api/authors/{id}` | Atualiza um autor existente | 200, 400, 404 |
+| `DELETE` | `/api/authors/{id}` | Exclui um autor | 204, 400, 404 |
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/v1/books` | Lista todos os livros |
-| `GET` | `/api/v1/books/{id}` | Obtém um livro por ID |
-| `POST` | `/api/v1/books` | Cria um novo livro |
-| `PUT` | `/api/v1/books/{id}` | Atualiza um livro existente |
-| `DELETE` | `/api/v1/books/{id}` | Exclui um livro |
+### 📘 Livros (`/api/books`)
+
+| Método | Endpoint | Descrição | Status Codes |
+|--------|----------|-----------|--------------|
+| `GET` | `/api/books` | Lista todos os livros com paginação | 200, 400 |
+| `GET` | `/api/books/{id}` | Obtém um livro específico por ID | 200, 404 |
+| `POST` | `/api/books` | Cria um novo livro | 201, 400 |
+| `PUT` | `/api/books/{id}` | Atualiza um livro existente | 200, 400, 404 |
+| `DELETE` | `/api/books/{id}` | Exclui um livro | 204, 400, 404 |
+
+### Paginação
+
+Todos os endpoints GET de listagem suportam paginação através dos parâmetros:
+- `page`: Número da página (padrão: 1)
+- `pageSize`: Quantidade de itens por página (padrão: 20)
+
+**Exemplo:**
+```
+GET /api/books?page=1&pageSize=10
+```
 
 ## ⚙️ Configuração e Instalação
 
 ### Pré-requisitos
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) ou superior
 - [PostgreSQL 12+](https://www.postgresql.org/download/)
 - IDE (Visual Studio 2022, VS Code ou Rider)
+- Git
 
-### 🔧 Instalação
+### 🔧 Passo a Passo
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/apibook.git
-cd apibook
+git clone https://github.com/T4NCR3D3/ApiBook.git
+cd ApiBook
 ```
 
-2. **Configure a string de conexão**
+2. **Configure o PostgreSQL**
 
-Edite o arquivo `Book.Api/appsettings.json`:
+Crie um banco de dados PostgreSQL ou utilize um existente.
+
+3. **Configure a string de conexão**
+
+Edite o arquivo `Book.Api/appsettings.Development.json`:
 ```json
 {
   "ConnectionStrings": {
-    "Default": "Host=localhost;Port=5432;Database=BookDb;Username=postgres;Password=sua_senha"
+    "Default": "Host=localhost;Port=5432;Database=postgres;Username=seu_usuario;Password=sua_senha"
   }
 }
 ```
 
-3. **Restaure as dependências**
+> **Nota:** Para produção, configure o arquivo `appsettings.json` com as credenciais apropriadas.
+
+4. **Restaure as dependências**
 ```bash
 dotnet restore
 ```
 
-4. **Execute as migrations**
+5. **Execute as migrations do banco de dados**
+
+Navegue até a pasta da API e execute:
 ```bash
 cd Book.Api
-dotnet ef migrations add InitialCreate --project ../Book.Infra/Book.Infra.csproj --startup-project .
-dotnet ef database update --project ../Book.Infra/Book.Infra.csproj --startup-project .
+dotnet ef database update --project ../Book.Infra/Book.Infra.csproj
 ```
 
-5. **Execute a aplicação**
+Caso precise criar uma nova migration:
+```bash
+dotnet ef migrations add NomeDaMigration --project ../Book.Infra/Book.Infra.csproj --startup-project .
+```
+
+6. **Execute a aplicação**
 ```bash
 dotnet run --project Book.Api
 ```
 
-6. **Acesse a documentação Swagger**
+Ou pressione F5 no Visual Studio.
+
+7. **Acesse a documentação Swagger**
 ```
-https://localhost:7xxx/swagger
+https://localhost:7xxx/swagger/index.html
 ```
 
-## 📝 Exemplos de Uso
+Substitua `7xxx` pela porta configurada (verifique no terminal).
+
+## 📝 Exemplos de Requisições
 
 ### Criar um Gênero
 ```http
-POST /api/v1/genres
+POST /api/genres
 Content-Type: application/json
 
 {
@@ -206,21 +263,44 @@ Content-Type: application/json
 }
 ```
 
+**Resposta (201 Created):**
+```json
+{
+  "id": 1,
+  "name": "Ficção Científica",
+  "description": "Livros de ficção científica e futurismo",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": null
+}
+```
+
 ### Criar um Autor
 ```http
-POST /api/v1/authors
+POST /api/authors
 Content-Type: application/json
 
 {
   "name": "Isaac Asimov",
-  "biography": "Escritor e professor de bioquímica",
+  "biography": "Escritor russo-americano de ficção científica",
   "birthDate": "1920-01-02"
+}
+```
+
+**Resposta (201 Created):**
+```json
+{
+  "id": 1,
+  "name": "Isaac Asimov",
+  "biography": "Escritor russo-americano de ficção científica",
+  "birthDate": "1920-01-02T00:00:00Z",
+  "createdAt": "2024-01-15T10:35:00Z",
+  "updatedAt": null
 }
 ```
 
 ### Criar um Livro
 ```http
-POST /api/v1/books
+POST /api/books
 Content-Type: application/json
 
 {
@@ -233,50 +313,214 @@ Content-Type: application/json
 }
 ```
 
-## 🧪 Testes
-
-O projeto está preparado para receber testes unitários. Para adicionar:
-
-```bash
-dotnet new xunit -n Book.Tests
-dotnet sln add Book.Tests/Book.Tests.csproj
-dotnet add Book.Tests package Moq
-dotnet add Book.Tests package FluentAssertions
+**Resposta (201 Created):**
+```json
+{
+  "id": 1,
+  "title": "Fundação",
+  "description": "Primeiro livro da série Fundação",
+  "publicationDate": "1951-06-01T00:00:00Z",
+  "isbn": "978-0553293357",
+  "createdAt": "2024-01-15T10:40:00Z",
+  "updatedAt": null,
+  "authorId": 1,
+  "authorName": "Isaac Asimov",
+  "genreId": 1,
+  "genreName": "Ficção Científica"
+}
 ```
 
-## 📦 Estrutura de Pastas Detalhada
+### Obter um Livro por ID
+```http
+GET /api/books/1
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "title": "Fundação",
+  "description": "Primeiro livro da série Fundação",
+  "publicationDate": "1951-06-01T00:00:00Z",
+  "isbn": "978-0553293357",
+  "createdAt": "2024-01-15T10:40:00Z",
+  "updatedAt": null,
+  "authorId": 1,
+  "authorName": "Isaac Asimov",
+  "genreId": 1,
+  "genreName": "Ficção Científica"
+}
+```
+
+### Listar Livros com Paginação
+```http
+GET /api/books?page=1&pageSize=10
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Fundação",
+      "description": "Primeiro livro da série Fundação",
+      "publicationDate": "1951-06-01T00:00:00Z",
+      "isbn": "978-0553293357",
+      "createdAt": "2024-01-15T10:40:00Z",
+      "updatedAt": null,
+      "authorId": 1,
+      "authorName": "Isaac Asimov",
+      "genreId": 1,
+      "genreName": "Ficção Científica"
+    }
+  ],
+  "currentPage": 1,
+  "totalPages": 1,
+  "totalItens": 1,
+  "totalItemsPage": 1,
+  "maxItemsPerPage": 10,
+  "previousPage": null,
+  "nextPage": null,
+  "isLast": true,
+  "paged": true
+}
+```
+
+### Atualizar um Gênero
+```http
+PUT /api/genres/1
+Content-Type: application/json
+
+{
+  "name": "Ficção Científica Clássica",
+  "description": "Obras clássicas de ficção científica"
+}
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "Ficção Científica Clássica",
+  "description": "Obras clássicas de ficção científica",
+  "createdAt": "2024-01-15T10:30:00Z",
+  "updatedAt": "2024-01-15T11:00:00Z"
+}
+```
+
+### Excluir um Livro
+```http
+DELETE /api/books/1
+```
+
+**Resposta (204 No Content):**
+```
+(Sem corpo de resposta)
+```
+
+## 🔒 Códigos de Status HTTP
+
+A API utiliza os seguintes códigos de status HTTP padronizados:
+
+| Código | Descrição |
+|--------|-----------|
+| `200 OK` | Requisição bem-sucedida (GET, PUT) |
+| `201 Created` | Recurso criado com sucesso (POST) |
+| `204 No Content` | Recurso excluído com sucesso (DELETE) |
+| `400 Bad Request` | Erro de validação ou requisição inválida |
+| `404 Not Found` | Recurso não encontrado |
+| `500 Internal Server Error` | Erro interno do servidor |
+
+### Estrutura de Resposta de Erro
+
+```json
+{
+  "statusCode": 400,
+  "message": "Mensagem de erro detalhada",
+  "path": "/api/genres/999"
+}
+```
+
+## 📦 Estrutura de Pastas Completa
 
 ```
 📦 ApiBook
 ┣ 📂 Book.Api
+┃ ┣ 📂 Configurations
+┃ ┃ ┣ 📜 CustomControllerBase.cs
+┃ ┃ ┗ 📜 ServiceExtensions.cs
 ┃ ┣ 📂 Controllers
-┃ ┃ ┗ 📂 V1
-┃ ┃   ┣ 📜 AuthorsController.cs
-┃ ┃   ┣ 📜 BooksController.cs
-┃ ┃   ┗ 📜 GenresController.cs
+┃ ┃ ┣ 📜 AuthorsController.cs
+┃ ┃ ┣ 📜 BooksController.cs
+┃ ┃ ┗ 📜 GenresController.cs
 ┃ ┣ 📜 Program.cs
 ┃ ┣ 📜 appsettings.json
 ┃ ┗ 📜 appsettings.Development.json
 ┣ 📂 Book.Application
-┃ ┣ 📂 Common
-┃ ┃ ┗ 📜 Result.cs
 ┃ ┣ 📂 DTOs
-┃ ┃ ┣ 📂 Author (CreateAuthorDto, UpdateAuthorDto)
-┃ ┃ ┣ 📂 Book (CreateBookDto, UpdateBookDto)
-┃ ┃ ┗ 📂 Genre (CreateGenreDto, UpdateGenreDto)
+┃ ┃ ┣ 📂 Author
+┃ ┃ ┃ ┣ 📜 CreateAuthorDto.cs
+┃ ┃ ┃ ┗ 📜 UpdateAuthorDto.cs
+┃ ┃ ┣ 📂 Book
+┃ ┃ ┃ ┣ 📜 CreateBookDto.cs
+┃ ┃ ┃ ┗ 📜 UpdateBookDto.cs
+┃ ┃ ┗ 📂 Genre
+┃ ┃   ┣ 📜 CreateGenreDto.cs
+┃ ┃   ┗ 📜 UpdateGenreDto.cs
 ┃ ┣ 📂 Features
-┃ ┃ ┣ 📂 Authors (Commands, Queries, Handlers)
-┃ ┃ ┣ 📂 Books (Commands, Queries, Handlers)
-┃ ┃ ┗ 📂 Genres (Commands, Queries, Handlers)
+┃ ┃ ┣ 📂 Authors
+┃ ┃ ┃ ┣ 📂 Commands
+┃ ┃ ┃ ┣ 📂 Queries
+┃ ┃ ┃ ┗ 📂 Handlers
+┃ ┃ ┣ 📂 Books
+┃ ┃ ┃ ┣ 📂 Commands
+┃ ┃ ┃ ┣ 📂 Queries
+┃ ┃ ┃ ┗ 📂 Handlers
+┃ ┃ ┗ 📂 Genres
+┃ ┃   ┣ 📂 Commands
+┃ ┃   ┃ ┣ 📜 CreateGenreCommand.cs
+┃ ┃   ┃ ┣ 📜 UpdateGenreCommand.cs
+┃ ┃   ┃ ┗ 📜 DeleteGenreCommand.cs
+┃ ┃   ┣ 📂 Queries
+┃ ┃   ┃ ┣ 📜 GetPagedGenresQuery.cs
+┃ ┃   ┃ ┗ 📜 GetGenreByIdQuery.cs
+┃ ┃   ┗ 📂 Handlers
+┃ ┃     ┣ 📜 CreateGenreHandler.cs
+┃ ┃     ┣ 📜 UpdateGenreHandler.cs
+┃ ┃     ┣ 📜 DeleteGenreHandler.cs
+┃ ┃     ┣ 📜 GetPagedGenresHandler.cs
+┃ ┃     ┗ 📜 GetGenreByIdHandler.cs
 ┃ ┣ 📂 Interfaces
 ┃ ┃ ┗ 📂 Repositories
-┃ ┣ 📂 Mappings (AutoMapper Profiles)
+┃ ┃   ┣ 📜 IAuthorRepository.cs
+┃ ┃   ┣ 📜 IBookRepository.cs
+┃ ┃   ┗ 📜 IGenreRepository.cs
+┃ ┣ 📂 Mappings
+┃ ┃ ┗ 📜 MappingProfiles.cs
+┃ ┣ 📂 ModelInputs
+┃ ┃ ┗ 📜 PaginationRequest.cs
 ┃ ┗ 📂 ViewModels
+┃   ┣ 📂 Author
+┃   ┃ ┣ 📜 AuthorViewModel.cs
+┃   ┃ ┗ 📜 AuthorWithBooksViewModel.cs
+┃   ┣ 📂 Book
+┃   ┃ ┗ 📜 BookViewModel.cs
+┃   ┗ 📂 Genre
+┃     ┗ 📜 GenreViewModel.cs
 ┣ 📂 Book.Core
-┃ ┗ 📂 Entites
-┃   ┣ 📜 Author.cs
-┃   ┣ 📜 Book.cs
-┃   ┗ 📜 Genre.cs
+┃ ┣ 📂 Common
+┃ ┃ ┣ 📜 IRepositoryBase.cs
+┃ ┃ ┗ 📜 PagedList.cs
+┃ ┣ 📂 Entites
+┃ ┃ ┣ 📜 Author.cs
+┃ ┃ ┣ 📜 Book.cs
+┃ ┃ ┗ 📜 Genre.cs
+┃ ┣ 📂 Enum
+┃ ┃ ┗ 📜 ResultType.cs
+┃ ┗ 📂 ValueObjects
+┃   ┣ 📜 ErrorResponse.cs
+┃   ┗ 📜 ValidationResult.cs
 ┣ 📂 Book.Infra
 ┃ ┣ 📂 Context
 ┃ ┃ ┗ 📜 AppDbContext.cs
@@ -292,14 +536,68 @@ dotnet add Book.Tests package FluentAssertions
 ┗ 📜 README.md
 ```
 
-## 🔒 HTTP Status Codes
+## 🧪 Testes
 
-A API utiliza os seguintes códigos de status HTTP:
+O projeto está preparado para implementação de testes. Para adicionar testes unitários:
 
-- `200 OK` - Requisição bem-sucedida
-- `201 Created` - Recurso criado com sucesso
-- `400 Bad Request` - Erro de validação ou requisição inválida
-- `404 Not Found` - Recurso não encontrado
-- `500 Internal Server Error` - Erro interno do servidor
+```bash
+# Criar projeto de testes
+dotnet new xunit -n Book.Tests
+dotnet sln add Book.Tests/Book.Tests.csproj
 
-**Desenvolvido com ❤️ usando .NET 8**
+# Adicionar referências aos projetos
+dotnet add Book.Tests reference Book.Application/Book.Application.csproj
+dotnet add Book.Tests reference Book.Core/Book.Core.csproj
+
+# Adicionar pacotes de teste
+dotnet add Book.Tests package Moq
+dotnet add Book.Tests package FluentAssertions
+dotnet add Book.Tests package Microsoft.EntityFrameworkCore.InMemory
+```
+
+## 🛠️ Ferramentas de Desenvolvimento
+
+### Entity Framework Core Tools
+
+Para trabalhar com migrations:
+
+```bash
+# Instalar ferramenta global do EF Core
+dotnet tool install --global dotnet-ef
+
+# Adicionar migration
+dotnet ef migrations add NomeDaMigration --project Book.Infra --startup-project Book.Api
+
+# Atualizar banco de dados
+dotnet ef database update --project Book.Infra --startup-project Book.Api
+
+# Remover última migration
+dotnet ef migrations remove --project Book.Infra --startup-project Book.Api
+```
+
+### Swagger/OpenAPI
+
+A documentação interativa está disponível em:
+- Development: `https://localhost:{porta}/swagger`
+- Endpoint JSON: `https://localhost:{porta}/swagger/v1/swagger.json`
+
+## 📚 Recursos Adicionais
+
+### Conceitos Aplicados
+
+- **CQRS:** Separação entre operações de leitura (Queries) e escrita (Commands)
+- **Repository Pattern:** Abstração da camada de acesso a dados
+- **Mediator Pattern:** Desacoplamento entre requisições e handlers
+- **DTO Pattern:** Transferência de dados entre camadas
+- **Result Pattern:** Padronização de respostas com ValidationResult
+
+### Padrões de Nomenclatura
+
+- **Controllers:** `{Entity}Controller.cs`
+- **Commands:** `{Action}{Entity}Command.cs`
+- **Queries:** `Get{Entity/Entities}Query.cs`
+- **Handlers:** `{Action}{Entity}Handler.cs`
+- **DTOs:** `{Action}{Entity}Dto.cs`
+- **ViewModels:** `{Entity}ViewModel.cs`
+
+**Desenvolvido com ❤️ usando .NET 8 e Clean Architecture**
