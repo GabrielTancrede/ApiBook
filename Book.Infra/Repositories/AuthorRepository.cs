@@ -19,13 +19,6 @@ namespace Book.Infra.Repositories
             return await DbSet.ToPagedListAsync(page, pageSize);
         }
 
-        public async Task<Author?> GetByIdWithBooksAsync(int id)
-        {
-            return await DbSet
-                .Include(a => a.Books)
-                .FirstOrDefaultAsync(a => a.Id == id);
-        }
-
         public async Task<bool> ExistsAsync(int id)
         {
             return await DbSet.AnyAsync(a => a.Id == id);

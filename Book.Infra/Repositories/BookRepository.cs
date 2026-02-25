@@ -30,28 +30,5 @@ namespace Book.Infra.Repositories
                 .AsNoTracking()
                 .ToPagedListAsync(page, pageSize);
         }
-
-        public async Task<List<BookEntity>> GetByAuthorIdAsync(int authorId)
-        {
-            return await DbSet
-                .Include(b => b.Genre)
-                .Where(b => b.AuthorId == authorId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<List<BookEntity>> GetByGenreIdAsync(int genreId)
-        {
-            return await DbSet
-                .Include(b => b.Author)
-                .Where(b => b.GenreId == genreId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await DbSet.AnyAsync(b => b.Id == id);
-        }
     }
 }

@@ -5,7 +5,6 @@ namespace Book.Application.Interfaces.Repositories
 {
     public interface IGenreRepository : IRepositoryBase<Genre>
     {
-        Task<Genre?> GetByIdWithBooksAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> HasBooksAsync(int id);
         Task<PagedList<Genre>> SearchPaged(int page, int pageSize);
