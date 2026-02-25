@@ -1,8 +1,11 @@
-using Book.Application.Common;
 using Book.Application.ViewModels.Genre;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Genres.Queries
 {
-    public record GetGenreByIdQuery(int Id) : IRequest<Result<GenreViewModel>>;
+    public record GetGenreByIdQuery : IRequest<ValidationResult<GenreViewModel>>
+    {
+        public int Id { get; set; }
+    }
 }

@@ -16,11 +16,9 @@ namespace Book.Core.Entites
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        // Foreign Keys
         public int AuthorId { get; set; }
         public int GenreId { get; set; }
 
-        // Navigation Properties
         public virtual Author Author { get; set; } = null!;
         public virtual Genre Genre { get; set; } = null!;
     }

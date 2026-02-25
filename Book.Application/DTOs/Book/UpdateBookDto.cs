@@ -1,12 +1,12 @@
 namespace Book.Application.DTOs.Book
 {
-    public record UpdateBookDto(
-        int Id,
-        string Title,
-        string? Description,
-        DateTime PublicationDate,
-        string? ISBN,
-        int AuthorId,
-        int GenreId
-    );
+    public class UpdateBookDto
+    {
+        public string Title { get; set; }
+        public string? Description { get; set; }
+        public DateTime PublicationDate { get; set; }
+        public string? ISBN { get; set; }
+        public int AuthorId { get; set; }
+        public int GenreId { get; set; }
+    }
 }

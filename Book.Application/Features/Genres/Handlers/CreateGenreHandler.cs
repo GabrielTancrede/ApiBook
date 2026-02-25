@@ -1,14 +1,14 @@
-using AutoMapper;
-using Book.Application.Common;
 using Book.Application.Features.Genres.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Genre;
+using Book.Core.ValueObjects;
 using Book.Core.Entites;
+using AutoMapper;
 using MediatR;
 
 namespace Book.Application.Features.Genres.Handlers
 {
-    public class CreateGenreHandler : IRequestHandler<CreateGenreCommand, Result<GenreViewModel>>
+    public class CreateGenreHandler : IRequestHandler<CreateGenreCommand, ValidationResult<GenreViewModel>>
     {
         private readonly IGenreRepository _genreRepository;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Book.Application.Features.Genres.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Result<GenreViewModel>> Handle(CreateGenreCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<GenreViewModel>> Handle(CreateGenreCommand request, CancellationToken cancellationToken)
         {
             var genre = new Genre
             {
@@ -32,7 +32,7 @@ namespace Book.Application.Features.Genres.Handlers
             await _genreRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<GenreViewModel>(genre);
-            return Result<GenreViewModel>.Ok(viewModel, "Gênero criado com sucesso.");
+            return new ValidationResult<GenreViewModel>().Ok(viewModel, "Gênero criado com sucesso.");
         }
     }
 }

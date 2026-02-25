@@ -1,8 +1,9 @@
 namespace Book.Application.DTOs.Author
 {
-    public record CreateAuthorDto(
-        string Name,
-        string? Biography,
-        DateTime? BirthDate
-    );
+    public class CreateAuthorDto
+    {
+        public string Name { get; set; }
+        public string? Biography { get; set; }
+        public DateTime? BirthDate { get; set; }
+    }
 }

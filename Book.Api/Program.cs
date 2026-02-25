@@ -1,6 +1,5 @@
-using Book.Application.Extensions;
+using Book.Api.Configurations;
 using Book.Infra.Context;
-using Book.Infra.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -42,7 +41,7 @@ var assemblies = new[]
 };
 
 builder.Services.AddMediatorAndAutoMapper(assemblies);
-builder.Services.AddInfrastructureServices();
+builder.Services.ConfigureBaseServices();
 
 var app = builder.Build();
 

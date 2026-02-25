@@ -1,13 +1,13 @@
-using AutoMapper;
-using Book.Application.Common;
 using Book.Application.Features.Genres.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Genre;
+using Book.Core.ValueObjects;
+using AutoMapper;
 using MediatR;
 
 namespace Book.Application.Features.Genres.Handlers
 {
-    public class UpdateGenreHandler : IRequestHandler<UpdateGenreCommand, Result<GenreViewModel>>
+    public class UpdateGenreHandler : IRequestHandler<UpdateGenreCommand, ValidationResult<GenreViewModel>>
     {
         private readonly IGenreRepository _genreRepository;
         private readonly IMapper _mapper;
@@ -18,12 +18,13 @@ namespace Book.Application.Features.Genres.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Result<GenreViewModel>> Handle(UpdateGenreCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<GenreViewModel>> Handle(UpdateGenreCommand request, CancellationToken cancellationToken)
         {
-            var genre = await _genreRepository.GetByIdAsync(request.Dto.Id);
+            var validation = new ValidationResult<GenreViewModel>();
 
+            var genre = await _genreRepository.GetByIdAsync(request.Id);
             if (genre == null)
-                return Result<GenreViewModel>.Fail("Gênero não encontrado.");
+                return validation.NotFound("Gênero não encontrado.");
 
             genre.Name = request.Dto.Name;
             genre.Description = request.Dto.Description;
@@ -33,7 +34,7 @@ namespace Book.Application.Features.Genres.Handlers
             await _genreRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<GenreViewModel>(genre);
-            return Result<GenreViewModel>.Ok(viewModel, "Gênero atualizado com sucesso.");
+            return validation.Ok(viewModel, "Gênero atualizado com sucesso.");
         }
     }
 }

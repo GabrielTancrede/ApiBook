@@ -1,13 +1,13 @@
-using AutoMapper;
-using Book.Application.Common;
 using Book.Application.Features.Books.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Book;
+using Book.Core.ValueObjects;
+using AutoMapper;
 using MediatR;
 
 namespace Book.Application.Features.Books.Handlers
 {
-    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Result<BookViewModel>>
+    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, ValidationResult<BookViewModel>>
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
@@ -26,22 +26,21 @@ namespace Book.Application.Features.Books.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Result<BookViewModel>> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<BookViewModel>> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            var book = await _bookRepository.GetByIdAsync(request.Dto.Id);
+            var validation = new ValidationResult<BookViewModel>();
 
+            var book = await _bookRepository.GetByIdAsync(request.Id);
             if (book == null)
-                return Result<BookViewModel>.Fail("Livro não encontrado.");
+                return validation.NotFound("Livro não encontrado.");
 
-            // Validate Author exists
             var authorExists = await _authorRepository.ExistsAsync(request.Dto.AuthorId);
             if (!authorExists)
-                return Result<BookViewModel>.Fail("Autor não encontrado.");
+                return validation.NotFound("Autor não encontrado.");
 
-            // Validate Genre exists
             var genreExists = await _genreRepository.ExistsAsync(request.Dto.GenreId);
             if (!genreExists)
-                return Result<BookViewModel>.Fail("Gênero não encontrado.");
+                return validation.NotFound("Gênero não encontrado.");
 
             book.Title = request.Dto.Title;
             book.Description = request.Dto.Description;
@@ -54,10 +53,10 @@ namespace Book.Application.Features.Books.Handlers
             await _bookRepository.UpdateAsync(book);
             await _bookRepository.SaveChangesAsync();
 
-            // Reload with relations
             var updatedBook = await _bookRepository.GetByIdWithRelationsAsync(book.Id);
             var viewModel = _mapper.Map<BookViewModel>(updatedBook);
-            return Result<BookViewModel>.Ok(viewModel, "Livro atualizado com sucesso.");
+
+            return validation.Ok(viewModel, "Livro atualizado com sucesso.");
         }
     }
 }

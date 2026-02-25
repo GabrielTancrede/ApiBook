@@ -1,7 +1,10 @@
-using Book.Application.Common;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Genres.Commands
 {
-    public record DeleteGenreCommand(int Id) : IRequest<Result>;
+    public class DeleteGenreCommand : IRequest<ValidationResult<bool>>
+    {
+        public int Id { get; set; }
+    }
 }

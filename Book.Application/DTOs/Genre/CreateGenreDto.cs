@@ -1,7 +1,8 @@
 namespace Book.Application.DTOs.Genre
 {
-    public record CreateGenreDto(
-        string Name,
-        string? Description
-    );
+    public class CreateGenreDto
+    {
+        public string Name { get; set; }
+        public string? Description { get; set; }
+    }
 }

@@ -1,11 +1,11 @@
-using Book.Application.Common;
 using Book.Application.Features.Books.Commands;
 using Book.Application.Interfaces.Repositories;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Books.Handlers
 {
-    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
+    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, ValidationResult<bool>>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,17 +14,18 @@ namespace Book.Application.Features.Books.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<Result> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<bool>> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
-            var book = await _bookRepository.GetByIdAsync(request.Id);
+            var validation = new ValidationResult<bool>();
 
+            var book = await _bookRepository.GetByIdAsync(request.Id);
             if (book == null)
-                return Result.Fail("Livro não encontrado.");
+                return validation.NotFound("Livro não encontrado.");
 
             await _bookRepository.RemoveAsync(book);
             await _bookRepository.SaveChangesAsync();
 
-            return Result.Ok("Livro excluído com sucesso.");
+            return validation.Ok(true, "Livro excluído com sucesso.");
         }
     }
 }

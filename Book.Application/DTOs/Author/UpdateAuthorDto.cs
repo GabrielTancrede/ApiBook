@@ -1,9 +1,9 @@
 namespace Book.Application.DTOs.Author
 {
-    public record UpdateAuthorDto(
-        int Id,
-        string Name,
-        string? Biography,
-        DateTime? BirthDate
-    );
+    public class UpdateAuthorDto
+    {
+        public string Name { get; set; }
+        public string? Biography { get; set; }
+        public DateTime? BirthDate { get; set; }
+    }
 }

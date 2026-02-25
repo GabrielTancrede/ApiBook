@@ -1,5 +1,7 @@
 using Book.Application.Interfaces.Repositories;
+using Book.Core.Common;
 using Book.Core.Entites;
+using Book.Core.Extensions;
 using Book.Infra.Context;
 using Book.Infra.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,11 @@ namespace Book.Infra.Repositories
     {
         public GenreRepository(AppDbContext db) : base(db)
         {
+        }
+
+        public async Task<PagedList<Genre>> SearchPaged(int page, int pageSize)
+        {
+            return await DbSet.ToPagedListAsync(page, pageSize);
         }
 
         public async Task<Genre?> GetByIdWithBooksAsync(int id)

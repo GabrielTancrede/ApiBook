@@ -1,13 +1,13 @@
-using AutoMapper;
-using Book.Application.Common;
 using Book.Application.Features.Authors.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Author;
+using Book.Core.ValueObjects;
+using AutoMapper;
 using MediatR;
 
 namespace Book.Application.Features.Authors.Handlers
 {
-    public class UpdateAuthorHandler : IRequestHandler<UpdateAuthorCommand, Result<AuthorViewModel>>
+    public class UpdateAuthorHandler : IRequestHandler<UpdateAuthorCommand, ValidationResult<AuthorViewModel>>
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
@@ -18,12 +18,12 @@ namespace Book.Application.Features.Authors.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Result<AuthorViewModel>> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<AuthorViewModel>> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-            var author = await _authorRepository.GetByIdAsync(request.Dto.Id);
-
+            var validation = new ValidationResult<AuthorViewModel>();
+            var author = await _authorRepository.GetByIdAsync(request.Id);
             if (author == null)
-                return Result<AuthorViewModel>.Fail("Autor não encontrado.");
+                return validation.NotFound("Autor não encontrado.");
 
             author.Name = request.Dto.Name;
             author.Biography = request.Dto.Biography;
@@ -34,7 +34,7 @@ namespace Book.Application.Features.Authors.Handlers
             await _authorRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<AuthorViewModel>(author);
-            return Result<AuthorViewModel>.Ok(viewModel, "Autor atualizado com sucesso.");
+            return validation.Ok(viewModel, "Autor atualizado com sucesso.");
         }
     }
 }

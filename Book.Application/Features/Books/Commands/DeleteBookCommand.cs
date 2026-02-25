@@ -1,7 +1,10 @@
-using Book.Application.Common;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Books.Commands
 {
-    public record DeleteBookCommand(int Id) : IRequest<Result>;
+    public class DeleteBookCommand : IRequest<ValidationResult<bool>>
+    {
+        public int Id { get; set; }
+    }
 }

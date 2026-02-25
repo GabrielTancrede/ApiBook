@@ -1,8 +1,11 @@
-using Book.Application.Common;
 using Book.Application.ViewModels.Book;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Books.Queries
 {
-    public record GetBookByIdQuery(int Id) : IRequest<Result<BookViewModel>>;
+    public class GetBookByIdQuery : IRequest<ValidationResult<BookViewModel>>
+    {
+        public int Id { get; set; }
+    }
 }

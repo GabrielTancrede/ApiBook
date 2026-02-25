@@ -1,14 +1,14 @@
-using AutoMapper;
-using Book.Application.Common;
 using Book.Application.Features.Authors.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Author;
+using Book.Core.ValueObjects;
 using Book.Core.Entites;
+using AutoMapper;
 using MediatR;
 
 namespace Book.Application.Features.Authors.Handlers
 {
-    public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, Result<AuthorViewModel>>
+    public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, ValidationResult<AuthorViewModel>>
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Book.Application.Features.Authors.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Result<AuthorViewModel>> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<AuthorViewModel>> Handle(CreateAuthorCommand request, CancellationToken cancellationToken)
         {
             var author = new Author
             {
@@ -33,7 +33,7 @@ namespace Book.Application.Features.Authors.Handlers
             await _authorRepository.SaveChangesAsync();
 
             var viewModel = _mapper.Map<AuthorViewModel>(author);
-            return Result<AuthorViewModel>.Ok(viewModel, "Autor criado com sucesso.");
+            return new ValidationResult<AuthorViewModel>().Ok(viewModel, "Autor criado com sucesso.");
         }
     }
 }

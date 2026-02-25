@@ -1,4 +1,6 @@
 using Book.Application.Interfaces.Repositories;
+using Book.Core.Common;
+using Book.Core.Extensions;
 using Book.Infra.Context;
 using Book.Infra.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +22,13 @@ namespace Book.Infra.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<List<BookEntity>> GetAllWithRelationsAsync()
+        public async Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize)
         {
             return await DbSet
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToPagedListAsync(page, pageSize);
         }
 
         public async Task<List<BookEntity>> GetByAuthorIdAsync(int authorId)

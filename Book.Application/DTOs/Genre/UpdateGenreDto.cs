@@ -1,8 +1,8 @@
 namespace Book.Application.DTOs.Genre
 {
-    public record UpdateGenreDto(
-        int Id,
-        string Name,
-        string? Description
-    );
+    public class UpdateGenreDto
+    {
+        public string Name { get; set; }
+        public string? Description { get; set; }
+    }
 }

@@ -1,11 +1,11 @@
-using Book.Application.Common;
 using Book.Application.Features.Authors.Commands;
 using Book.Application.Interfaces.Repositories;
+using Book.Core.ValueObjects;
 using MediatR;
 
 namespace Book.Application.Features.Authors.Handlers
 {
-    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result>
+    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, ValidationResult<bool>>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,21 +14,22 @@ namespace Book.Application.Features.Authors.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<Result> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<ValidationResult<bool>> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
+            var validation = new ValidationResult<bool>();
             var author = await _authorRepository.GetByIdAsync(request.Id);
 
             if (author == null)
-                return Result.Fail("Autor não encontrado.");
+                return validation.NotFound("Autor não encontrado.");
 
             var hasBooks = await _authorRepository.HasBooksAsync(request.Id);
             if (hasBooks)
-                return Result.Fail("Não é possível excluir o autor pois existem livros associados.");
+                return validation.Invalid("Não é possível excluir o autor pois existem livros associados.");
 
             await _authorRepository.RemoveAsync(author);
             await _authorRepository.SaveChangesAsync();
 
-            return Result.Ok("Autor excluído com sucesso.");
+            return validation.Ok(true, "Autor excluído com sucesso.");
         }
     }
 }

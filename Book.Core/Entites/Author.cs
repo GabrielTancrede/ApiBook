@@ -9,7 +9,6 @@ namespace Book.Core.Entites
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        // Navigation Properties
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
     }
 }
