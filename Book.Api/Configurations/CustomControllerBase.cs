@@ -9,12 +9,20 @@ namespace Book.Api.Configurations
     [Area("api")]
     public abstract class CustomControllerBase : ControllerBase
     {
-        private ActionResult ResultError(string message, int statusCode = 400)
+        private ActionResult ResultError(string message, int statusCode = 400, object? details = null)
         {
+            var operationId = Guid.NewGuid().ToString();
+            
+            var errorMessage = statusCode == 500 
+                ? "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde." 
+                : message;
+            
             var errorResponse = new ErrorResponse(
                 statusCode,
-                message,
-                HttpContext.Request.Path.Value ?? string.Empty
+                errorMessage,
+                HttpContext.Request.Path.Value ?? string.Empty,
+                details,
+                operationId
             );
 
             return StatusCode(statusCode, errorResponse);
@@ -25,9 +33,9 @@ namespace Book.Api.Configurations
             return obj.ResultType switch
             {
                 ResultType.Success => Ok(obj.Object),
-                ResultType.Invalid => BadRequest(obj.Message),
-                ResultType.NotFound => NotFound(obj.Message),
-                _ => ResultError(obj.Message),
+                ResultType.Invalid => ResultError(obj.Message, 400),
+                ResultType.NotFound => ResultError(obj.Message, 404),
+                _ => ResultError(obj.Message, 500),
             };
         }
 
@@ -53,9 +61,9 @@ namespace Book.Api.Configurations
             return validation.ResultType switch
             {
                 ResultType.Success => Ok(validation.Object),
-                ResultType.NotFound => NotFound(validation.Message),
-                ResultType.Invalid => BadRequest(validation.Message),
-                _ => ResultError(validation.Message),
+                ResultType.NotFound => ResultError(validation.Message, 404),
+                ResultType.Invalid => ResultError(validation.Message, 400),
+                _ => ResultError(validation.Message, 500),
             };
         }
 
@@ -64,9 +72,9 @@ namespace Book.Api.Configurations
             return validation.ResultType switch
             {
                 ResultType.Success => NoContent(),
-                ResultType.NotFound => NotFound(validation.Message),
-                ResultType.Invalid => BadRequest(validation.Message),
-                _ => ResultError(validation.Message),
+                ResultType.NotFound => ResultError(validation.Message, 404),
+                ResultType.Invalid => ResultError(validation.Message, 400),
+                _ => ResultError(validation.Message, 500),
             };
         }
     }

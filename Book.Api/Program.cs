@@ -1,4 +1,5 @@
 using Book.Api.Configurations;
+using Book.Api.Middlewares;
 using Book.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -44,6 +45,14 @@ builder.Services.AddMediatorAndAutoMapper(assemblies);
 builder.Services.ConfigureBaseServices();
 
 var app = builder.Build();
+
+app.UseCors(options => options
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+);
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
