@@ -7,6 +7,6 @@ namespace Book.Application.Interfaces.Repositories
     {
         Task<BookEntity?> GetByIdWithRelationsAsync(int id);
         Task<bool> ExistsByTitleAndAuthorAsync(string title, int authorId, int? excludeId = null);
-        Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize);
+        Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize, bool paged = true);
     }
 }

@@ -20,7 +20,7 @@ namespace Book.Application.Features.Books.Handlers
 
         public async Task<ValidationResult<PagedList<BookViewModel>>> Handle(GetPagedBooksQuery request, CancellationToken cancellationToken)
         {
-            var books = await _bookRepository.SearchPaged(request.Page, request.PageSize);
+            var books = await _bookRepository.SearchPaged(request.Page, request.PageSize, request.Paged);
             var pagedList = _mapper.Map<PagedList<BookViewModel>>(books);
 
             return new ValidationResult<PagedList<BookViewModel>>().Ok(pagedList);

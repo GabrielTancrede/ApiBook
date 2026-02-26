@@ -14,9 +14,9 @@ namespace Book.Infra.Repositories
         {
         }
 
-        public async Task<PagedList<Genre>> SearchPaged(int page, int pageSize)
+        public async Task<PagedList<Genre>> SearchPaged(int page, int pageSize, bool paged = true)
         {
-            return await DbSet.ToPagedListAsync(page, pageSize);
+            return await DbSet.ToPagedListAsync(page, pageSize, paged);
         }
 
         public async Task<bool> ExistsAsync(int id)

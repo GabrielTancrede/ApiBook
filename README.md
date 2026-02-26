@@ -219,14 +219,22 @@ Todos os endpoints seguem o padrão REST e estão documentados no Swagger.
 ### Paginação
 
 Todos os endpoints GET de listagem suportam paginação através dos parâmetros:
-- `page`: Número da página (padrão: 1)
-- `pageSize`: Quantidade de itens por página (padrão: 20)
 
-**Exemplo:**
+- `page`: Número da página (padrão: 1)
+- `pageSize`: Quantidade de itens por página (padrão: 20, máximo: 100)
+- `paged`: Habilitar/desabilitar paginação (padrão: `true`). Quando `false`, retorna todos os registros ignorando `page` e `pageSize`
+
+**Exemplos:**
+
+Paginado (padrão):
 ```
 GET /api/v1/books?page=1&pageSize=10
 ```
 
+Todos os registros (sem paginação):
+```
+GET /api/v1/books?paged=false
+```
 ## ⚙️ Configuração e Instalação
 
 ### Pré-requisitos
@@ -427,6 +435,30 @@ GET /api/v1/books?page=1&pageSize=10
   "nextPage": null,
   "isLast": true,
   "paged": true
+}
+```
+
+### Listar Todos os Livros (sem paginação)
+```http
+GET /api/v1/books?paged=false
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "data": [
+    { "id": 1, "title": "Fundação", ... },
+    { "id": 2, "title": "Eu, Robô", ... }
+  ],
+  "currentPage": 1,
+  "totalPages": 1,
+  "totalItens": 2,
+  "totalItemsPage": 2,
+  "maxItemsPerPage": 2,
+  "previousPage": null,
+  "nextPage": null,
+  "isLast": true,
+  "paged": false
 }
 ```
 

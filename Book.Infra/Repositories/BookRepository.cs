@@ -30,13 +30,13 @@ namespace Book.Infra.Repositories
                 (!excludeId.HasValue || b.Id != excludeId.Value));
         }
 
-        public async Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize)
+        public async Task<PagedList<BookEntity>> SearchPaged(int page, int pageSize, bool paged = true)
         {
             return await DbSet
                 .Include(b => b.Author)
                 .Include(b => b.Genre)
                 .AsNoTracking()
-                .ToPagedListAsync(page, pageSize);
+                .ToPagedListAsync(page, pageSize, paged);
         }
     }
 }

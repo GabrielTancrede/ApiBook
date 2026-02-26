@@ -21,7 +21,7 @@ namespace Book.Application.Features.Genres.Handlers
 
         public async Task<ValidationResult<PagedList<GenreViewModel>>> Handle(GetPagedGenresQuery request, CancellationToken cancellationToken)
         {
-            var genres = await _genreRepository.SearchPaged(request.Page, request.PageSize);
+            var genres = await _genreRepository.SearchPaged(request.Page, request.PageSize, request.Paged);
             var pagedList = _mapper.Map<PagedList<GenreViewModel>>(genres);
             
             return new ValidationResult<PagedList<GenreViewModel>>().Ok(pagedList);

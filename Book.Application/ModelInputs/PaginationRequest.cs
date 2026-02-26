@@ -9,5 +9,7 @@ namespace Book.Application.ModelInputs
 
         [Range(1, 100, ErrorMessage = "O tamanho da página deve ser entre 1 e 100.")]
         public int PageSize { get; set; } = 20;
+
+        public bool Paged { get; set; } = true;
     }
 }

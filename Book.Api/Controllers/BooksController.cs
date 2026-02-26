@@ -26,7 +26,8 @@ namespace Book.Api.Controllers
             var result = await _mediator.Send(new GetPagedBooksQuery 
             { 
                 Page = pagination.Page,
-                PageSize = pagination.PageSize
+                PageSize = pagination.PageSize,
+                Paged = pagination.Paged
             });
 
             return QueryResult(result);
