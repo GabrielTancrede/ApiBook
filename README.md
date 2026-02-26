@@ -240,7 +240,7 @@ GET /api/v1/books?page=1&pageSize=10
 
 1. **Clone o repositório**
 ```bash
-git clone https://github.com/T4NCR3D3/ApiBook.git
+git clone https://github.com/GabrielTancrede/ApiBook.git
 cd ApiBook
 ```
 
