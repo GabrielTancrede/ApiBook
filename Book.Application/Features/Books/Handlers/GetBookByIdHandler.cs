@@ -23,6 +23,10 @@ namespace Book.Application.Features.Books.Handlers
             var validation = new ValidationResult<BookViewModel>();
 
             var book = await _bookRepository.GetByIdWithRelationsAsync(request.Id);
+
+            if (book is null)
+                return validation.NotFound("Livro não encontrado.");
+
             var viewModel = _mapper.Map<BookViewModel>(book);
 
             return validation.Ok(viewModel);

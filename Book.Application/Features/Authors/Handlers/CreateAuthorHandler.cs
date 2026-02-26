@@ -2,7 +2,7 @@ using Book.Application.Features.Authors.Commands;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Author;
 using Book.Core.ValueObjects;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using AutoMapper;
 using MediatR;
 

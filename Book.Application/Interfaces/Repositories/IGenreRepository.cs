@@ -1,5 +1,5 @@
 using Book.Core.Common;
-using Book.Core.Entites;
+using Book.Core.Entities;
 
 namespace Book.Application.Interfaces.Repositories
 {

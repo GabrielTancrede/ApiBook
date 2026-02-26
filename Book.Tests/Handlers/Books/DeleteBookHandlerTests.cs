@@ -4,7 +4,7 @@ using Book.Application.Interfaces.Repositories;
 using Book.Core.Enum;
 using FluentAssertions;
 using Moq;
-using BookEntity = Book.Core.Entites.Book;
+using BookEntity = Book.Core.Entities.Book;
 
 namespace Book.Tests.Handlers.Books
 {

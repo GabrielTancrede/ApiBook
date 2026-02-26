@@ -1,6 +1,6 @@
 using Book.Application.Interfaces.Repositories;
 using Book.Core.Common;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using Book.Core.Extensions;
 using Book.Infra.Context;
 using Book.Infra.Repositories.Base;
@@ -33,7 +33,7 @@ namespace Book.Infra.Repositories
 
         public async Task<bool> HasBooksAsync(int id)
         {
-            return await Db.Set<Core.Entites.Book>().AnyAsync(b => b.GenreId == id);
+            return await Db.Set<Core.Entities.Book>().AnyAsync(b => b.GenreId == id);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Book.Core.Entites;
+using Book.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Book.Infra.Context
@@ -11,7 +11,7 @@ namespace Book.Infra.Context
 
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Author> Authors { get; set; }
-        public DbSet<Core.Entites.Book> Books { get; set; }
+        public DbSet<Core.Entities.Book> Books { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,7 +46,7 @@ namespace Book.Infra.Context
             });
 
             // Book Configuration
-            modelBuilder.Entity<Core.Entites.Book>(entity =>
+            modelBuilder.Entity<Core.Entities.Book>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(300);

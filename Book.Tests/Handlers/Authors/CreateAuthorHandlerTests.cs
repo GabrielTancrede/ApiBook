@@ -5,7 +5,7 @@ using Book.Application.Features.Authors.Handlers;
 using Book.Application.Features.Authors.Mappings;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Author;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using Book.Core.Enum;
 using FluentAssertions;
 using Moq;

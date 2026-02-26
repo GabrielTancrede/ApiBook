@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Book.Application.ViewModels.Author;
 using Book.Core.Common;
-using Book.Core.Entites;
+using Book.Core.Entities;
 
 namespace Book.Application.Features.Authors.Mappings
 {

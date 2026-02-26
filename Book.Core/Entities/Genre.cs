@@ -1,11 +1,10 @@
-namespace Book.Core.Entites
+namespace Book.Core.Entities
 {
-    public class Author
+    public class Genre
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string? Biography { get; set; }
-        public DateTime? BirthDate { get; set; }
+        public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 

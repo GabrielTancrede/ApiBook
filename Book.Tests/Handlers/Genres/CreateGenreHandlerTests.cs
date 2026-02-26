@@ -5,7 +5,7 @@ using Book.Application.Features.Genres.Handlers;
 using Book.Application.Features.Genres.Mappings;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Genre;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using Book.Core.Enum;
 using FluentAssertions;
 using Moq;

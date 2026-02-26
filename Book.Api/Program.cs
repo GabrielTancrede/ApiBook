@@ -60,7 +60,9 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
-    options.EnableSensitiveDataLogging();
+
+    if (builder.Environment.IsDevelopment())
+        options.EnableSensitiveDataLogging();
 }, ServiceLifetime.Scoped);
 
 var assemblies = new[]

@@ -555,7 +555,7 @@ A API utiliza os seguintes códigos de status HTTP padronizados:
 ┃ ┣ 📂 Common
 ┃ ┃ ┣ 📜 IRepositoryBase.cs
 ┃ ┃ ┗ 📜 PagedList.cs
-┃ ┣ 📂 Entites
+┃ ┣ 📂 Entities
 ┃ ┃ ┣ 📜 Author.cs
 ┃ ┃ ┣ 📜 Book.cs
 ┃ ┃ ┗ 📜 Genre.cs

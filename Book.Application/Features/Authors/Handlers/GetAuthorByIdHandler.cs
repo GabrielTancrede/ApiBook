@@ -23,6 +23,10 @@ namespace Book.Application.Features.Authors.Handlers
             var validation = new ValidationResult<AuthorViewModel>();
 
             var author = await _authorRepository.GetByIdAsync(request.Id);
+
+            if (author is null)
+                return validation.NotFound("Autor não encontrado.");
+
             var viewModel = _mapper.Map<AuthorViewModel>(author);
 
             return validation.Ok(viewModel);

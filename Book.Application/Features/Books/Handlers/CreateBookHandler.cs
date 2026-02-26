@@ -1,6 +1,6 @@
 using Book.Application.Features.Books.Commands;
 using Book.Application.Interfaces.Repositories;
-using BookEntity = Book.Core.Entites.Book;
+using BookEntity = Book.Core.Entities.Book;
 using Book.Application.ViewModels.Book;
 using Book.Core.ValueObjects;
 using AutoMapper;

@@ -4,7 +4,7 @@ using Book.Core.Extensions;
 using Book.Infra.Context;
 using Book.Infra.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
-using BookEntity = Book.Core.Entites.Book;
+using BookEntity = Book.Core.Entities.Book;
 
 namespace Book.Infra.Repositories
 {

@@ -5,11 +5,11 @@ using Book.Application.Features.Books.Handlers;
 using Book.Application.Features.Books.Mappings;
 using Book.Application.Interfaces.Repositories;
 using Book.Application.ViewModels.Book;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using Book.Core.Enum;
 using FluentAssertions;
 using Moq;
-using BookEntity = Book.Core.Entites.Book;
+using BookEntity = Book.Core.Entities.Book;
 
 namespace Book.Tests.Handlers.Books
 {

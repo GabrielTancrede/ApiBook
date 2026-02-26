@@ -1,7 +1,7 @@
 using Book.Application.Features.Authors.Commands;
 using Book.Application.Features.Authors.Handlers;
 using Book.Application.Interfaces.Repositories;
-using Book.Core.Entites;
+using Book.Core.Entities;
 using Book.Core.Enum;
 using FluentAssertions;
 using Moq;
