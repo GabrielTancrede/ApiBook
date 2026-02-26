@@ -149,6 +149,7 @@ Expõe os endpoints da API e configurações.
 - ✅ **Nomes de autores** devem ser únicos (case-insensitive)
 - ✅ **Livros** não podem ter título duplicado para o mesmo autor (case-insensitive)
 - ✅ Validação de entrada obrigatória em todos os DTOs (campos obrigatórios, tamanho máximo, etc.)
+- ✅ Validação de **formato ISBN-10/ISBN-13** no campo ISBN dos livros (com ou sem hífens)
 
 ## � Validação e Segurança
 
@@ -160,9 +161,28 @@ Todos os DTOs possuem validação com **DataAnnotations**, garantindo que os dad
 |-----|---------------------|--------|
 | CreateGenreDto / UpdateGenreDto | Name | Name: max 100 chars; Description: max 500 chars |
 | CreateAuthorDto / UpdateAuthorDto | Name | Name: max 150 chars; Biography: max 2000 chars |
-| CreateBookDto / UpdateBookDto | Title, AuthorId, GenreId | Title: max 200 chars; Description: max 2000 chars; ISBN: max 20 chars |
+| CreateBookDto / UpdateBookDto | Title, AuthorId, GenreId | Title: max 200 chars; Description: max 2000 chars; ISBN: formato ISBN-10 ou ISBN-13 (hífens opcionais) |
 
 A API utiliza `InvalidModelStateResponseFactory` para retornar automaticamente respostas `400 Bad Request` padronizadas quando os dados falham na validação.
+
+#### 📖 Validação de ISBN
+
+O campo `ISBN` dos DTOs de livro aceita **ISBN-10** e **ISBN-13**, com ou sem hífens separadores, validado via `[RegularExpression]`:
+
+| Formato | Exemplo válido | Regra |
+|---------|---------------|-------|
+| **ISBN-10** | `0-306-40615-2` ou `0306406152` | 9 dígitos + dígito/`X` verificador |
+| **ISBN-13** | `978-65-5939-484-6` ou `9786559394846` | 12 dígitos + dígito verificador |
+
+Regex utilizada:
+```
+^(?:\d[-]?){9}[\dX]$|^(?:\d[-]?){12}\d$
+```
+
+Exemplos de valores **inválidos** (resultam em `400 Bad Request`):
+- Letras ou caracteres especiais além de `-` e `X` final
+- Sequência com número incorreto de dígitos (ex: `12345`)
+- ISBN-10 com `X` em posição diferente da última
 
 ### Validação de Duplicidade
 

@@ -164,7 +164,7 @@ namespace Book.Tests.Validation
         }
 
         [Fact]
-        public void CreateBookDto_ISBNExcedeTamanho_DeveRetornarErro()
+        public void CreateBookDto_ISBNFormatoInvalido_DeveRetornarErro()
         {
             var dto = new CreateBookDto
             {
@@ -172,10 +172,10 @@ namespace Book.Tests.Validation
                 PublicationDate = DateTime.Now,
                 AuthorId = 1,
                 GenreId = 1,
-                ISBN = new string('1', 21)
+                ISBN = "12345"
             };
             var results = ValidateModel(dto);
-            results.Should().Contain(r => r.ErrorMessage!.Contains("máximo 20 caracteres"));
+            results.Should().Contain(r => r.ErrorMessage!.Contains("ISBN-10") || r.ErrorMessage!.Contains("ISBN-13"));
         }
 
         [Fact]

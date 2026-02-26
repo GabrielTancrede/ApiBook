@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Book.Application.DTOs.Book
 {
@@ -14,7 +14,8 @@ namespace Book.Application.DTOs.Book
         [Required(ErrorMessage = "A data de publicação é obrigatória.")]
         public DateTime PublicationDate { get; set; }
 
-        [MaxLength(20, ErrorMessage = "O ISBN deve ter no máximo 20 caracteres.")]
+        [RegularExpression(@"^(?:\d[-]?){9}[\dX]$|^(?:\d[-]?){12}\d$",
+            ErrorMessage = "O ISBN deve estar no formato ISBN-10 (ex: 0-306-40615-2) ou ISBN-13 (ex: 978-65-5939-484-6).")]
         public string? ISBN { get; set; }
 
         [Required(ErrorMessage = "O autor é obrigatório.")]
